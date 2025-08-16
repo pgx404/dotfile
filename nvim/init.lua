@@ -9,6 +9,7 @@ vim.g.loaded_netrwSettings = 1
 vim.g.loeaded_netrwFileHandlers = 1
 
 vim.opt.termguicolors = true
+vim.opt.encoding = "UTF-8"
 vim.opt.signcolumn = "yes"
 vim.opt.mouse = ""
 vim.opt.undofile = true
@@ -17,8 +18,22 @@ vim.opt.relativenumber = true
 vim.opt.number = true
 vim.opt.cursorline = true
 vim.opt.wrap = true
-vim.opt.tabstop = 4
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
 vim.opt.vb = false
+vim.opt.ruler = true
+vim.opt.showcmd = true
+vim.opt.showmatch = true
+vim.opt.wildmenu = true
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+-- show more hidden characters
+-- also, show tabs nicer
+vim.opt.listchars = "tab:^ ,nbsp:¬,extends:»,precedes:«,trail:•"
+vim.opt.scrolloff = 11
+-- when opening a file with a command (like :e),
+-- don't suggest files like there:
+vim.opt.wildignore = ".hg,.svn,*~,*.png,*.jpg,*.gif,*.min.js,*.swp,*.o,vendor,dist,_site"
 
 -- keymaps --
 
