@@ -8,6 +8,8 @@ vim.g.loaded_netrwPlugin = 1
 vim.g.loaded_netrwSettings = 1
 vim.g.loeaded_netrwFileHandlers = 1
 
+vim.wo.fillchars = 'eob: '
+
 vim.opt.termguicolors = true
 vim.opt.encoding = "UTF-8"
 vim.opt.signcolumn = "yes"
@@ -18,8 +20,8 @@ vim.opt.relativenumber = true
 vim.opt.number = true
 vim.opt.cursorline = true
 vim.opt.wrap = true
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
+vim.opt.shiftwidth = 4
+vim.opt.tabstop = 4
 vim.opt.vb = false
 vim.opt.ruler = true
 vim.opt.showcmd = true
@@ -34,6 +36,7 @@ vim.opt.scrolloff = 11
 -- when opening a file with a command (like :e),
 -- don't suggest files like there:
 vim.opt.wildignore = ".hg,.svn,*~,*.png,*.jpg,*.gif,*.min.js,*.swp,*.o,vendor,dist,_site"
+-- vim.o.winborder = "rounded"
 
 -- keymaps --
 
@@ -71,13 +74,16 @@ vim.pack.add({
 	{ src = "https://github.com/nvim-tree/nvim-tree.lua" },
 	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
+	{ src = "https://github.com/L3MON4D3/LuaSnip" },
 	{ src = "https://github.com/rafamadriz/friendly-snippets" },
 	{
 		src = "https://github.com/Saghen/blink.cmp",
 		version = vim.version.range('1.*')
 	},
 	{ src = "https://github.com/Saecki/crates.nvim" },
-	{ src = "https://github.com/echasnovski/mini.pairs" }
+	{ src = "https://github.com/echasnovski/mini.pairs" },
+	{ src = "https://github.com/echasnovski/mini.pick" },
+	{ src = "https://github.com/christoomey/vim-tmux-navigator" }
 })
 
 -- auto completion
@@ -99,6 +105,9 @@ require("blink.cmp").setup({
 		implementation = "lua"
 	}
 })
+
+require("mini.pick").setup();
+vim.keymap.set('n', "<leader>ff", ":Pick files<cr>")
 
 require("nvim-web-devicons").setup()
 
@@ -126,6 +135,7 @@ local function prefix_diagnostic(prefix, diagnostic)
 end
 
 vim.diagnostic.config {
+	{ jump = { float = true } },
 	virtual_text = {
 		prefix = '',
 		format = function(diagnostic)
@@ -183,11 +193,48 @@ vim.api.nvim_create_autocmd("CursorHold", {
 	end,
 })
 
+-- LSP actions
+vim.api.nvim_create_autocmd('LspAttach', {
+	callback = function(args)
+		-- Hover
+		vim.keymap.set('n', 'K', function()
+			vim.lsp.buf.hover({ border = "single", focusable = false })
+		end, { desc = "lsp hover", buffer = args.buf })
+
+		-- Go to declaration
+		vim.keymap.set('n', 'gD', function()
+			vim.lsp.buf.declaration()
+		end, { desc = "LSP go to declaration", buffer = buf })
+
+		-- Go to definition
+		vim.keymap.set('n', 'gd', function()
+			vim.lsp.buf.definition()
+		end, { desc = "LSP go to definition", buffer = buf })
+
+		-- LSP signature help
+		vim.keymap.set('n', '<leader>sh', function()
+			vim.lsp.buf.signature_help()
+		end, { desc = "LSP signature help", buffer = buf })
+
+		-- Code action
+		vim.keymap.set('n', '<leader>ca', function()
+			vim.lsp.buf.code_action()
+		end, { desc = "LSP code action", buffer = buf })
+
+		-- Rename symbol
+		vim.keymap.set('n', '<leader>rn', function()
+			vim.lsp.buf.rename()
+		end, { desc = "LSP rename symbol", buffer = buf })
+	end
+})
+
+
 -- color
 vim.cmd("colorscheme moonfly")
 
 -- lsp
 
+-- NOTE: can't figure out why I need this
 vim.lsp.enable("lua_ls")
 vim.lsp.enable("clangd")
 vim.lsp.enable("html")
